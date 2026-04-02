@@ -1,0 +1,30 @@
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+
+class User(AbstractUser):
+    """Usuário da plataforma: administrador ou comunidade."""
+
+    class Role(models.TextChoices):
+        ADMIN = "admin", "Administrador"
+        COMMUNITY = "community", "Comunidade"
+
+    role = models.CharField(
+        max_length=20,
+        choices=Role.choices,
+        default=Role.COMMUNITY,
+        db_index=True,
+    )
+
+    class Meta:
+        verbose_name = "usuário"
+        verbose_name_plural = "usuários"
+
+    def save(self, *args, **kwargs):
+        if self.is_superuser:
+            self.role = self.Role.ADMIN
+        if self.role == self.Role.ADMIN:
+            self.is_staff = True
+        elif self.role == self.Role.COMMUNITY and not self.is_superuser:
+            self.is_staff = False
+        super().save(*args, **kwargs)
