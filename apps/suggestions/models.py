@@ -17,6 +17,12 @@ class CommunitySuggestion(models.Model):
         choices=SuggestionType.choices,
     )
     message = models.TextField("message")
+    attachments = models.JSONField(
+        "attachments",
+        default=list,
+        blank=True,
+        help_text="URLs públicas dos ficheiros enviados (ex.: partilha de fotos).",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed = models.BooleanField("reviewed", default=False, db_index=True)
 

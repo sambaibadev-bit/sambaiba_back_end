@@ -41,7 +41,7 @@ class CommunityEventCollectionAPIView(APIView):
         responses={200: CommunityEventSerializer(many=True)},
     )
     def get(self, request):
-        qs = CommunityEvent.objects.all()
+        qs = CommunityEvent.objects.select_related("category")
         order = parse_ordering(request, "-date", _EVENT_ORDERING)
         if order:
             qs = qs.order_by(*order)
@@ -81,7 +81,7 @@ class CommunityEventDetailAPIView(APIView):
         responses={200: CommunityEventSerializer},
     )
     def get(self, request, pk):
-        obj = get_object_or_404(CommunityEvent, pk=pk)
+        obj = get_object_or_404(CommunityEvent.objects.select_related("category"), pk=pk)
         return Response(CommunityEventSerializer(obj).data)
 
     @extend_schema(
@@ -93,7 +93,7 @@ class CommunityEventDetailAPIView(APIView):
         auth=JWT_AUTH,
     )
     def put(self, request, pk):
-        obj = get_object_or_404(CommunityEvent, pk=pk)
+        obj = get_object_or_404(CommunityEvent.objects.select_related("category"), pk=pk)
         ser = CommunityEventSerializer(obj, data=request.data)
         ser.is_valid(raise_exception=True)
         ser.save()
@@ -108,7 +108,7 @@ class CommunityEventDetailAPIView(APIView):
         auth=JWT_AUTH,
     )
     def patch(self, request, pk):
-        obj = get_object_or_404(CommunityEvent, pk=pk)
+        obj = get_object_or_404(CommunityEvent.objects.select_related("category"), pk=pk)
         ser = CommunityEventSerializer(obj, data=request.data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
@@ -122,6 +122,6 @@ class CommunityEventDetailAPIView(APIView):
         auth=JWT_AUTH,
     )
     def delete(self, request, pk):
-        obj = get_object_or_404(CommunityEvent, pk=pk)
+        obj = get_object_or_404(CommunityEvent.objects.select_related("category"), pk=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

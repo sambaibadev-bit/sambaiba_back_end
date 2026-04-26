@@ -7,3 +7,4 @@ from .models import GalleryItem
 class GalleryItemAdmin(admin.ModelAdmin):
     list_display = ("title", "category", "media_type", "created_at")
     search_fields = ("title",)
+    autocomplete_fields = ("category",)

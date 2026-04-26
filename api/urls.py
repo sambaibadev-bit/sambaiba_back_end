@@ -6,6 +6,8 @@ urlpatterns = [
     path("health/", views.HealthView.as_view(), name="health"),
     path("auth/", include("apps.jwt_auth.urls")),
     path("users/", include("apps.users.urls")),
+    path("community/event-categories/", include("apps.event_categories.urls")),
+    path("community/gallery-categories/", include("apps.gallery_categories.urls")),
     path("community/events/", include("apps.events.urls")),
     path("community/gallery/", include("apps.gallery.urls")),
     path("community/collection-points/", include("apps.collection_points.urls")),

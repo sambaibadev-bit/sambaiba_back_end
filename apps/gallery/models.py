@@ -9,7 +9,14 @@ class GalleryItem(models.Model):
         VIDEO = "video", "Video"
 
     title = models.CharField("title", max_length=200)
-    category = models.CharField("category", max_length=64, blank=True)
+    category = models.ForeignKey(
+        "gallery_categories.GalleryCategory",
+        on_delete=models.PROTECT,
+        related_name="gallery_items",
+        verbose_name="category",
+        null=True,
+        blank=True,
+    )
     media_type = models.CharField(
         max_length=16,
         choices=MediaType.choices,

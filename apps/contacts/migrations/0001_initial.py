@@ -5,9 +5,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ("community", "0001_initial"),
-    ]
+    dependencies = []
 
     operations = [
         migrations.SeparateDatabaseAndState(

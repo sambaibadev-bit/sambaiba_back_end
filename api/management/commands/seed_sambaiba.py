@@ -15,6 +15,8 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from apps.contacts.models import UsefulContact
+from apps.event_categories.models import EventCategory
+from apps.gallery_categories.models import GalleryCategory
 from apps.collection_points.models import CollectionPoint
 from apps.donations.models import DonationCampaign, DonationCampaignPointLink
 from apps.events.models import CommunityEvent
@@ -89,6 +91,7 @@ class Command(BaseCommand):
 
     def _seed_events(self):
         today = date.today()
+        c = {s: EventCategory.objects.get(slug=s) for s in EventCategory.objects.values_list("slug", flat=True)}
         rows = [
             CommunityEvent(
                 title=f"{SEED_PREFIX}Vacinação no CRAS",
@@ -96,7 +99,7 @@ class Command(BaseCommand):
                 date=today + timedelta(days=5),
                 time="08:00–12:00",
                 location="CRAS – Centro",
-                category=CommunityEvent.Category.SAUDE,
+                category=c["saude"],
                 is_highlighted=True,
             ),
             CommunityEvent(
@@ -105,7 +108,7 @@ class Command(BaseCommand):
                 date=today + timedelta(days=12),
                 time="19:00",
                 location="Praça Central",
-                category=CommunityEvent.Category.CULTURA,
+                category=c["cultura"],
                 is_highlighted=False,
             ),
             CommunityEvent(
@@ -114,7 +117,7 @@ class Command(BaseCommand):
                 date=today + timedelta(days=20),
                 time="14:00–17:00",
                 location="Escola Municipal",
-                category=CommunityEvent.Category.EDUCACAO,
+                category=c["educacao"],
                 is_highlighted=True,
             ),
             CommunityEvent(
@@ -123,7 +126,7 @@ class Command(BaseCommand):
                 date=today + timedelta(days=28),
                 time="07:00–13:00",
                 location="Av. Principal",
-                category=CommunityEvent.Category.COMERCIO,
+                category=c["comercio"],
                 is_highlighted=False,
             ),
             CommunityEvent(
@@ -132,7 +135,7 @@ class Command(BaseCommand):
                 date=date(today.year, 5, 1),
                 time="10:00",
                 location="Praça Central",
-                category=CommunityEvent.Category.DATA_COMEMORATIVA,
+                category=c["data_comemorativa"],
                 is_highlighted=True,
             ),
         ]
@@ -140,28 +143,29 @@ class Command(BaseCommand):
         self.stdout.write(f"Created {len(rows)} events.")
 
     def _seed_gallery(self):
+        c = {s: GalleryCategory.objects.get(slug=s) for s in GalleryCategory.objects.values_list("slug", flat=True)}
         rows = [
             GalleryItem(
                 title=f"{SEED_PREFIX}Ação de limpeza",
-                category="eventos",
+                category=c["eventos"],
                 media_type=GalleryItem.MediaType.IMAGE,
                 media_url="https://picsum.photos/seed/sambaiba1/800/600",
             ),
             GalleryItem(
                 title=f"{SEED_PREFIX}Entrega de cestas",
-                category="campanhas",
+                category=c["campanhas"],
                 media_type=GalleryItem.MediaType.IMAGE,
                 media_url="https://picsum.photos/seed/sambaiba2/800/600",
             ),
             GalleryItem(
                 title=f"{SEED_PREFIX}Oficina de arte",
-                category="cultura",
+                category=c["cultura"],
                 media_type=GalleryItem.MediaType.IMAGE,
                 media_url="https://picsum.photos/seed/sambaiba3/800/600",
             ),
             GalleryItem(
                 title=f"{SEED_PREFIX}Palestra de saúde",
-                category="saude",
+                category=c["saude"],
                 media_type=GalleryItem.MediaType.IMAGE,
                 media_url="https://picsum.photos/seed/sambaiba4/800/600",
             ),

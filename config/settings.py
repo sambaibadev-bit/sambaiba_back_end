@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'api',
     'apps.users',
     'apps.jwt_auth',
-    'apps.community',
+    'apps.event_categories',
+    'apps.gallery_categories',
     'apps.events',
     'apps.gallery',
     'apps.collection_points',
@@ -145,6 +146,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
@@ -221,9 +225,11 @@ SPECTACULAR_SETTINGS = {
         {'name': 'Users', 'description': 'Registration and profile'},
         {'name': 'Collection Points', 'description': 'Drop-off locations for donations'},
         {'name': 'Donations', 'description': 'Donation campaigns'},
+        {'name': 'Event categories', 'description': 'Labels for community events'},
         {'name': 'Events', 'description': 'Community events'},
         {'name': 'Contacts', 'description': 'Useful contacts'},
         {'name': 'Gallery', 'description': 'Action photos and media'},
+        {'name': 'Gallery categories', 'description': 'Labels for gallery items'},
         {'name': 'News', 'description': 'News and notices'},
         {'name': 'Suggestions', 'description': 'Messages from the community'},
     ],

@@ -1,4 +1,4 @@
-# Estado dos modelos movidos do app `community`; tabelas já existem no banco.
+# Estado inicial dos modelos de eventos (tabelas `community_*` já existentes ou criadas pelo deploy).
 
 from django.db import migrations, models
 
@@ -7,9 +7,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ("community", "0001_initial"),
-    ]
+    dependencies = []
 
     operations = [
         migrations.SeparateDatabaseAndState(
