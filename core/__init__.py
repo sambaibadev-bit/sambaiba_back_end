@@ -1,1 +1,1 @@
-"""Utilitários compartilhados do projeto (não é um app Django)."""
+"""Shared project utilities (not a Django app)."""

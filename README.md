@@ -22,8 +22,8 @@ pip install -r requirements.txt
 No Linux ou macOS:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -53,7 +53,17 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 5. Servidor de desenvolvimento
+### 5. (Opcional) Povoar dados de demonstração
+
+Com o banco migrado e o servidor podendo conectar ao Postgres:
+
+```powershell
+python manage.py seed_sambaiba
+```
+
+Isso insere eventos, galeria, campanhas, notícias, contatos e sugestões de exemplo. Linhas antigas criadas pelo mesmo comando são removidas antes (identificador `[Seed] ` no título/nome). O usuário **admin** existente não é alterado. Use `--skip-suggestions` para não criar sugestões de teste.
+
+### 6. Servidor de desenvolvimento
 
 ```powershell
 python manage.py runserver
@@ -61,7 +71,8 @@ python manage.py runserver
 
 A API fica em `http://127.0.0.1:8000/`.
 
-- **Swagger (testar a API):** [http://127.0.0.1:8000/api/docs/](http://127.0.0.1:8000/api/docs/)
+- **Swagger UI (testar a API):** [http://127.0.0.1:8000/api/docs/](http://127.0.0.1:8000/api/docs/) (espelho: [http://127.0.0.1:8000/api/swagger/](http://127.0.0.1:8000/api/swagger/)) — textos da documentação OpenAPI em **inglês**
+- **Schema OpenAPI (JSON):** [http://127.0.0.1:8000/api/schema/](http://127.0.0.1:8000/api/schema/)
 - **ReDoc:** [http://127.0.0.1:8000/api/redoc/](http://127.0.0.1:8000/api/redoc/)
 - **Admin Django:** [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 
@@ -70,7 +81,7 @@ A API fica em `http://127.0.0.1:8000/`.
 - `config/` — settings e URLs principais
 - `apps/` — apps Django (`users`, `jwt_auth`, `events`, `actions`, …)
 - `api/` — rotas agregadas sob `/api/`
-- `core/` — paginação, permissões e validadores compartilhados
+- `core/` — paginação, permissões, utilitários OpenAPI e validadores compartilhados
 
 ## Produção
 

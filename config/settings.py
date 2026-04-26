@@ -43,14 +43,24 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'api',
     'apps.users',
     'apps.jwt_auth',
+    'apps.community',
+    'apps.events',
+    'apps.gallery',
+    'apps.collection_points',
+    'apps.donations',
+    'apps.news',
+    'apps.contacts',
+    'apps.suggestions',
     'drf_spectacular',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -121,9 +131,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -134,6 +144,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS = [
+        o.strip()
+        for o in os.environ.get("DJANGO_CORS_ALLOWED_ORIGINS", "").split(",")
+        if o.strip()
+    ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -160,15 +180,51 @@ SIMPLE_JWT = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Sambaiba API',
-    'DESCRIPTION': 'Documentação OpenAPI da API REST.',
+    'DESCRIPTION': (
+        'OpenAPI 3 documentation for the Sambaiba REST API. '
+    ),
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
     'SCHEMA_PATH_PREFIX': '/api',
     'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
+    'TAGS_SORTER': 'alpha',
+    'OPERATION_SORTER': 'alpha',
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayRequestDuration': True,
+        'filter': True,
+        'syntaxHighlight.theme': 'monokai',
+        'tryItOutEnabled': True,
+    },
+    'REDOC_DIST': 'SIDECAR',
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'jwtAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+                'description': (
+                    'Paste the `access` value returned by `POST /api/auth/jwt/`. '
+                    'Swagger UI sends it as `Authorization: Bearer <token>`.'
+                ),
+            },
+        },
+    },
+    'SERVERS': [
+        {'url': 'http://127.0.0.1:8000', 'description': 'Local development'},
+    ],
     'TAGS': [
-        {'name': 'Health', 'description': 'Verificação do serviço'},
-        {'name': 'Autenticação JWT', 'description': 'Obter, renovar e validar tokens JWT'},
-        {'name': 'Usuários', 'description': 'Registro e perfil'},
+        {'name': 'Health', 'description': 'Service health check'},
+        {'name': 'JWT Auth', 'description': 'Obtain, refresh, and verify JWT tokens'},
+        {'name': 'Users', 'description': 'Registration and profile'},
+        {'name': 'Collection Points', 'description': 'Drop-off locations for donations'},
+        {'name': 'Donations', 'description': 'Donation campaigns'},
+        {'name': 'Events', 'description': 'Community events'},
+        {'name': 'Contacts', 'description': 'Useful contacts'},
+        {'name': 'Gallery', 'description': 'Action photos and media'},
+        {'name': 'News', 'description': 'News and notices'},
+        {'name': 'Suggestions', 'description': 'Messages from the community'},
     ],
 }

@@ -1,0 +1,961 @@
+openapi: 3.0.3
+info:
+  title: Sambaiba API
+  version: 1.0.0
+  description: Documentação OpenAPI da API REST.
+paths:
+  /api/auth/jwt/:
+    post:
+      operationId: auth_jwt_create
+      description: 'Credenciais: `username` e `password`. Resposta inclui `access`,
+        `refresh`, `user_id`, `username` e `role`.'
+      summary: Obter par de tokens (access + refresh)
+      tags:
+      - Autenticação JWT
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPairRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPairRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtObtainPairResponse'
+          description: ''
+  /api/auth/jwt/refresh/:
+    post:
+      operationId: auth_jwt_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      summary: Renovar access token
+      tags:
+      - Autenticação JWT
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JwtRefreshRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JwtRefreshRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JwtRefreshRequestRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtRefreshResponse'
+          description: ''
+  /api/auth/jwt/verify/:
+    post:
+      operationId: auth_jwt_verify_create
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      summary: Validar token (access ou refresh)
+      tags:
+      - Autenticação JWT
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JwtVerifyRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/JwtVerifyRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/JwtVerifyRequestRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+          description: ''
+  /api/community/contacts/:
+    get:
+      operationId: community_contacts_retrieve
+      description: 'GET: público vê só publicados; administrador vê todos. POST: administrador.'
+      tags:
+      - Contatos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: community_contacts_create
+      description: 'GET: público vê só publicados; administrador vê todos. POST: administrador.'
+      tags:
+      - Contatos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/community/contacts/{id}/:
+    get:
+      operationId: community_contacts_retrieve_2
+      description: 'GET: público só se publicado. PUT/PATCH/DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Contatos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: community_contacts_update
+      description: 'GET: público só se publicado. PUT/PATCH/DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Contatos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: community_contacts_partial_update
+      description: 'GET: público só se publicado. PUT/PATCH/DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Contatos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: community_contacts_destroy
+      description: 'GET: público só se publicado. PUT/PATCH/DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Contatos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/community/donation-campaigns/:
+    get:
+      operationId: community_donation_campaigns_retrieve
+      description: 'GET: lista pública (por padrão só ativas). POST: cria (administrador).'
+      tags:
+      - Doações
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: community_donation_campaigns_create
+      description: 'GET: lista pública (por padrão só ativas). POST: cria (administrador).'
+      tags:
+      - Doações
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/community/donation-campaigns/{id}/:
+    get:
+      operationId: community_donation_campaigns_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Doações
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: community_donation_campaigns_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Doações
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: community_donation_campaigns_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Doações
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: community_donation_campaigns_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Doações
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/community/events/:
+    get:
+      operationId: community_events_retrieve
+      description: 'GET: lista pública. POST: cria (administrador).'
+      tags:
+      - Eventos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: community_events_create
+      description: 'GET: lista pública. POST: cria (administrador).'
+      tags:
+      - Eventos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/community/events/{id}/:
+    get:
+      operationId: community_events_retrieve_2
+      description: 'GET: público. PUT/PATCH/DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Eventos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: community_events_update
+      description: 'GET: público. PUT/PATCH/DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Eventos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: community_events_partial_update
+      description: 'GET: público. PUT/PATCH/DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Eventos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: community_events_destroy
+      description: 'GET: público. PUT/PATCH/DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Eventos
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/community/gallery/:
+    get:
+      operationId: community_gallery_retrieve
+      description: 'GET: lista pública. POST: cria (administrador).'
+      tags:
+      - Galeria
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: community_gallery_create
+      description: 'GET: lista pública. POST: cria (administrador).'
+      tags:
+      - Galeria
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/community/gallery/{id}/:
+    get:
+      operationId: community_gallery_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Galeria
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: community_gallery_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Galeria
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: community_gallery_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Galeria
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: community_gallery_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Galeria
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/community/news/:
+    get:
+      operationId: community_news_retrieve
+      description: 'GET: lista pública. POST: cria (administrador).'
+      tags:
+      - Notícias
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: community_news_create
+      description: 'GET: lista pública. POST: cria (administrador).'
+      tags:
+      - Notícias
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/community/news/{id}/:
+    get:
+      operationId: community_news_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Notícias
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: community_news_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Notícias
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: community_news_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Notícias
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: community_news_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Notícias
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/community/suggestions/:
+    get:
+      operationId: community_suggestions_retrieve
+      description: 'GET: lista (administrador). POST: envio público.'
+      tags:
+      - Sugestões
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: community_suggestions_create
+      description: 'GET: lista (administrador). POST: envio público.'
+      tags:
+      - Sugestões
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/community/suggestions/{id}/:
+    get:
+      operationId: community_suggestions_retrieve_2
+      description: 'GET, PATCH, DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Sugestões
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: community_suggestions_update
+      description: 'GET, PATCH, DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Sugestões
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    patch:
+      operationId: community_suggestions_partial_update
+      description: 'GET, PATCH, DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Sugestões
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: community_suggestions_destroy
+      description: 'GET, PATCH, DELETE: administrador.'
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Sugestões
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/health/:
+    get:
+      operationId: health_retrieve
+      description: Endpoint simples para verificar se a API está no ar.
+      summary: Health check
+      tags:
+      - Health
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+          description: ''
+  /api/users/me/:
+    get:
+      operationId: users_me_retrieve
+      description: 'Requer JWT no header `Authorization: Bearer <access>`.'
+      summary: Perfil do usuário autenticado
+      tags:
+      - Usuários
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    patch:
+      operationId: users_me_partial_update
+      summary: Atualizar perfil
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserProfileRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+  /api/users/register/:
+    post:
+      operationId: users_register_create
+      description: Cria usuário com perfil **Comunidade**. Administradores são criados
+        via `createsuperuser` ou painel Django. Depois obtenha JWT em POST /api/auth/jwt/.
+      summary: Registrar usuário
+      tags:
+      - Usuários
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreate'
+          description: ''
+components:
+  schemas:
+    CustomTokenObtainPairRequest:
+      type: object
+      description: Resposta do login inclui dados básicos do usuário além de access
+        e refresh.
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+        service:
+          type: string
+      required:
+      - service
+      - status
+    JwtObtainPairResponse:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+        user_id:
+          type: integer
+        username:
+          type: string
+        role:
+          type: string
+      required:
+      - access
+      - refresh
+      - role
+      - user_id
+      - username
+    JwtRefreshRequestRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    JwtRefreshResponse:
+      type: object
+      properties:
+        access:
+          type: string
+      required:
+      - access
+    JwtVerifyRequestRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          minLength: 1
+      required:
+      - token
+    PatchedUserProfileRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          title: Endereço de email
+          maxLength: 254
+        first_name:
+          type: string
+          title: Primeiro nome
+          maxLength: 150
+        last_name:
+          type: string
+          title: Último nome
+          maxLength: 150
+    RoleEnum:
+      enum:
+      - admin
+      - community
+      type: string
+      description: |-
+        * `admin` - Administrador
+        * `community` - Comunidade
+    UserCreate:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          title: Usuário
+          description: Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_
+            apenas.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Endereço de email
+          maxLength: 254
+        first_name:
+          type: string
+          title: Primeiro nome
+          maxLength: 150
+        last_name:
+          type: string
+          title: Último nome
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+      required:
+      - email
+      - id
+      - role
+      - username
+    UserCreateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          title: Usuário
+          description: Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_
+            apenas.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Endereço de email
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        first_name:
+          type: string
+          title: Primeiro nome
+          maxLength: 150
+        last_name:
+          type: string
+          title: Último nome
+          maxLength: 150
+      required:
+      - email
+      - password
+      - username
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          readOnly: true
+          title: Usuário
+          description: Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_
+            apenas.
+        email:
+          type: string
+          format: email
+          title: Endereço de email
+          maxLength: 254
+        first_name:
+          type: string
+          title: Primeiro nome
+          maxLength: 150
+        last_name:
+          type: string
+          title: Último nome
+          maxLength: 150
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          readOnly: true
+      required:
+      - id
+      - role
+      - username
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+- name: Health
+  description: Verificação do serviço
+- name: Autenticação JWT
+  description: Obter, renovar e validar tokens JWT
+- name: Usuários
+  description: Registro e perfil
+- name: Comunidade
+  description: Legado / visão geral
+- name: Eventos
+  description: Eventos comunitários
+- name: Galeria
+  description: Mídias das ações
+- name: Doações
+  description: Campanhas de doação
+- name: Notícias
+  description: Notícias e avisos
+- name: Contatos
+  description: Contatos úteis
+- name: Sugestões
+  description: Mensagens da comunidade

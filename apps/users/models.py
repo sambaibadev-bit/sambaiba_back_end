@@ -3,11 +3,11 @@ from django.db import models
 
 
 class User(AbstractUser):
-    """Usuário da plataforma: administrador ou comunidade."""
+    """Platform user: administrator or community member."""
 
     class Role(models.TextChoices):
-        ADMIN = "admin", "Administrador"
-        COMMUNITY = "community", "Comunidade"
+        ADMIN = "admin", "Administrator"
+        COMMUNITY = "community", "Community"
 
     role = models.CharField(
         max_length=20,
@@ -17,8 +17,8 @@ class User(AbstractUser):
     )
 
     class Meta:
-        verbose_name = "usuário"
-        verbose_name_plural = "usuários"
+        verbose_name = "user"
+        verbose_name_plural = "users"
 
     def save(self, *args, **kwargs):
         if self.is_superuser:

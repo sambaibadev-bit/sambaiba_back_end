@@ -6,25 +6,30 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .serializers import CustomTokenObtainPairSerializer
 
 
-@extend_schema(
-    tags=["Autenticação JWT"],
-    summary="Obter par de tokens (access + refresh)",
-    description=(
-        "Credenciais: `username` e `password`. "
-        "Resposta inclui `access`, `refresh`, `user_id`, `username` e `role`."
-    ),
-    responses={
-        200: inline_serializer(
-            name="JwtObtainPairResponse",
-            fields={
-                "access": serializers.CharField(),
-                "refresh": serializers.CharField(),
-                "user_id": serializers.IntegerField(),
-                "username": serializers.CharField(),
-                "role": serializers.CharField(),
-            },
-        )
-    },
+@extend_schema_view(
+    post=extend_schema(
+        tags=["JWT Auth"],
+        summary="Obtain token pair (access + refresh)",
+        operation_id="auth_jwt_obtain",
+        description=(
+            "Credentials: `username` and `password`. "
+            "Response includes `access`, `refresh`, `user_id`, `username`, and `role`. "
+            "Use `access` in Swagger: **Authorize** → **jwtAuth** scheme."
+        ),
+        request=CustomTokenObtainPairSerializer,
+        responses={
+            200: inline_serializer(
+                name="JwtObtainPairResponse",
+                fields={
+                    "access": serializers.CharField(),
+                    "refresh": serializers.CharField(),
+                    "user_id": serializers.IntegerField(),
+                    "username": serializers.CharField(),
+                    "role": serializers.CharField(),
+                },
+            )
+        },
+    )
 )
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -32,8 +37,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 @extend_schema_view(
     post=extend_schema(
-        tags=["Autenticação JWT"],
-        summary="Renovar access token",
+        tags=["JWT Auth"],
+        summary="Refresh access token",
+        operation_id="auth_jwt_refresh",
         request=inline_serializer(
             name="JwtRefreshRequest",
             fields={"refresh": serializers.CharField()},
@@ -52,8 +58,9 @@ class DocumentedTokenRefreshView(TokenRefreshView):
 
 @extend_schema_view(
     post=extend_schema(
-        tags=["Autenticação JWT"],
-        summary="Validar token (access ou refresh)",
+        tags=["JWT Auth"],
+        summary="Verify token (access or refresh)",
+        operation_id="auth_jwt_verify",
         request=inline_serializer(
             name="JwtVerifyRequest",
             fields={"token": serializers.CharField()},

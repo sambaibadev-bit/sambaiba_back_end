@@ -2,7 +2,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """Resposta do login inclui dados básicos do usuário além de access e refresh."""
+    """Login response includes basic user fields in addition to access and refresh."""
 
     @classmethod
     def get_token(cls, user):

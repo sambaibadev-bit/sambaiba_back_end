@@ -18,7 +18,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         if User.objects.filter(email__iexact=value).exists():
-            raise serializers.ValidationError("Este e-mail já está em uso.")
+            raise serializers.ValidationError("This email is already in use.")
         return value.lower()
 
     def create(self, validated_data):
@@ -34,5 +34,5 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         user = self.context["request"].user
         if User.objects.filter(email__iexact=value).exclude(pk=user.pk).exists():
-            raise serializers.ValidationError("Este e-mail já está em uso.")
+            raise serializers.ValidationError("This email is already in use.")
         return value.lower()

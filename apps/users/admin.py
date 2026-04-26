@@ -12,9 +12,9 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = (
         *BaseUserAdmin.fieldsets,
-        ("Tipo de usuário", {"fields": ("role",)}),
+        ("User type", {"fields": ("role",)}),
     )
     add_fieldsets = (
         *BaseUserAdmin.add_fieldsets,
-        ("Tipo de usuário", {"fields": ("role",)}),
+        ("User type", {"fields": ("role",)}),
     )

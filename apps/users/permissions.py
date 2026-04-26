@@ -4,7 +4,7 @@ from .models import User
 
 
 class IsAdministrator(BasePermission):
-    """Acesso apenas para usuários com papel Administrador (ou superusuário)."""
+    """Allow only users with the Administrator role (or superusers)."""
 
     def has_permission(self, request, view):
         u = request.user
