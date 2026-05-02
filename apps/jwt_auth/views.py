@@ -12,8 +12,8 @@ from .serializers import CustomTokenObtainPairSerializer
         summary="Obtain token pair (access + refresh)",
         operation_id="auth_jwt_obtain",
         description=(
-            "Credentials: `username` and `password`. "
-            "Response includes `access`, `refresh`, `user_id`, `username`, and `role`. "
+            "Credentials: `email` and `password`. "
+            "Response includes `access`, `refresh`, `user_id`, `username`, `email`, and `role`. "
             "Use `access` in Swagger: **Authorize** → **jwtAuth** scheme."
         ),
         request=CustomTokenObtainPairSerializer,
@@ -25,6 +25,7 @@ from .serializers import CustomTokenObtainPairSerializer
                     "refresh": serializers.CharField(),
                     "user_id": serializers.IntegerField(),
                     "username": serializers.CharField(),
+                    "email": serializers.EmailField(),
                     "role": serializers.CharField(),
                 },
             )
