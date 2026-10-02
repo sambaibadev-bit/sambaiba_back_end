@@ -61,7 +61,12 @@ Com o banco migrado e o servidor podendo conectar ao Postgres:
 python manage.py seed_sambaiba
 ```
 
-Isso insere eventos, galeria, campanhas, notícias, contatos e sugestões de exemplo. Linhas antigas criadas pelo mesmo comando são removidas antes (identificador `[Seed] ` no título/nome). O usuário **admin** existente não é alterado. Use `--skip-suggestions` para não criar sugestões de teste.
+Isso insere eventos, galeria, campanhas, notícias, contatos e sugestões de exemplo. Linhas antigas criadas pelo mesmo comando são removidas antes (identificador `[Seed] ` no título/nome). Use `--skip-suggestions` para não criar sugestões de teste.
+
+Também garante um administrador local para o painel do site e para o Django admin. Rodar de novo redefine a senha desse usuário. Os demais usuários não são alterados.
+
+- E-mail: `admin@sambaiba.local`
+- Senha: `sambaiba123`
 
 ### 6. Servidor de desenvolvimento
 

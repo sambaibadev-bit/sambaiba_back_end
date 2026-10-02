@@ -34,7 +34,7 @@ class GalleryItemCollectionAPIView(APIView):
         responses={200: GalleryItemSerializer(many=True)},
     )
     def get(self, request):
-        qs = GalleryItem.objects.all()
+        qs = GalleryItem.objects.select_related("category")
         order = parse_ordering(request, "-created_at", _GALLERY_ORDERING)
         if order:
             qs = qs.order_by(*order)
@@ -72,7 +72,7 @@ class GalleryItemDetailAPIView(APIView):
         responses={200: GalleryItemSerializer},
     )
     def get(self, request, pk):
-        obj = get_object_or_404(GalleryItem, pk=pk)
+        obj = get_object_or_404(GalleryItem.objects.select_related("category"), pk=pk)
         return Response(GalleryItemSerializer(obj).data)
 
     @extend_schema(
@@ -84,7 +84,7 @@ class GalleryItemDetailAPIView(APIView):
         auth=JWT_AUTH,
     )
     def put(self, request, pk):
-        obj = get_object_or_404(GalleryItem, pk=pk)
+        obj = get_object_or_404(GalleryItem.objects.select_related("category"), pk=pk)
         ser = GalleryItemSerializer(obj, data=request.data)
         ser.is_valid(raise_exception=True)
         ser.save()
@@ -99,7 +99,7 @@ class GalleryItemDetailAPIView(APIView):
         auth=JWT_AUTH,
     )
     def patch(self, request, pk):
-        obj = get_object_or_404(GalleryItem, pk=pk)
+        obj = get_object_or_404(GalleryItem.objects.select_related("category"), pk=pk)
         ser = GalleryItemSerializer(obj, data=request.data, partial=True)
         ser.is_valid(raise_exception=True)
         ser.save()
@@ -113,6 +113,6 @@ class GalleryItemDetailAPIView(APIView):
         auth=JWT_AUTH,
     )
     def delete(self, request, pk):
-        obj = get_object_or_404(GalleryItem, pk=pk)
+        obj = get_object_or_404(GalleryItem.objects.select_related("category"), pk=pk)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

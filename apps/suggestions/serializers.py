@@ -32,7 +32,8 @@ class CommunitySuggestionStaffSerializer(serializers.ModelSerializer):
             "email",
             "type",
             "message",
+            "attachments",
             "reviewed",
             "created_at",
         )
-        read_only_fields = ("id", "created_at")
+        read_only_fields = ("id", "created_at", "attachments")

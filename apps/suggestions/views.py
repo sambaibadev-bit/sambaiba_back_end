@@ -1,3 +1,7 @@
+import os
+import uuid
+
+from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import OpenApiResponse, extend_schema, inline_serializer
 from rest_framework import serializers as drf_serializers
@@ -57,9 +61,43 @@ class CommunitySuggestionCollectionAPIView(APIView):
     def post(self, request):
         ser = CommunitySuggestionCreateSerializer(data=request.data)
         ser.is_valid(raise_exception=True)
-        ser.save()
+        obj = ser.save()
+
+        uploaded = (
+            request.FILES.getlist("photos")
+            if obj.suggestion_type == CommunitySuggestion.SuggestionType.FOTO
+            else []
+        )
+        if obj.suggestion_type == CommunitySuggestion.SuggestionType.FOTO and not uploaded:
+            obj.delete()
+            return Response(
+                {"photos": ["Envie pelo menos uma imagem para partilhar foto."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        urls = []
+        for f in uploaded:
+            ctype = getattr(f, "content_type", "") or ""
+            if not ctype.startswith("image/"):
+                obj.delete()
+                return Response(
+                    {"photos": ["Apenas ficheiros de imagem são aceites."]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            ext = os.path.splitext(getattr(f, "name", "") or "")[1].lower()
+            if ext not in (".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".heic", ".heif"):
+                ext = ".bin"
+            safe_name = f"{uuid.uuid4().hex}{ext}"
+            rel = f"suggestions/{obj.id}/{safe_name}"
+            stored_name = default_storage.save(rel, f)
+            urls.append(default_storage.url(stored_name))
+
+        if urls:
+            obj.attachments = urls
+            obj.save(update_fields=["attachments"])
+
         return Response(
-            {"ok": True, "id": ser.instance.id},
+            {"ok": True, "id": obj.id},
             status=status.HTTP_201_CREATED,
         )
 

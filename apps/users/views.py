@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics, permissions
 
+from .permissions import IsAdministrator
 from .serializers import UserCreateSerializer, UserProfileSerializer
 
 User = get_user_model()
@@ -13,16 +14,18 @@ User = get_user_model()
         summary="Register user",
         operation_id="users_register",
         description=(
-            "Creates a user with the **Community** role. "
-            "Administrators are created via `createsuperuser` or the Django admin. "
-            "Then obtain a JWT with `POST /api/auth/jwt/`."
+            "**Administrators only** (JWT + role `admin` or superuser). "
+            "Creates a **Community** user account on behalf of someone else — "
+            "not a public self-registration endpoint. "
+            "Obtain a JWT with `POST /api/auth/jwt/` first."
         ),
+        auth=[{"jwtAuth": []}],
     ),
 )
 class UserRegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserCreateSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated, IsAdministrator]
 
 
 @extend_schema_view(
