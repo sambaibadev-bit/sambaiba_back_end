@@ -10,6 +10,7 @@ class CommunityNews(models.Model):
         ATUALIZACAO = "atualizacao", "Update"
 
     title = models.CharField("title", max_length=200)
+    summary = models.CharField("summary", max_length=280)
     content = models.TextField("content")
     category = models.CharField(
         max_length=32,
@@ -17,6 +18,7 @@ class CommunityNews(models.Model):
         default=NewsCategory.COMUNICADO,
     )
     is_pinned = models.BooleanField("pinned", default=False, db_index=True)
+    image = models.ImageField("image", upload_to="news/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

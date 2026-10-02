@@ -4,8 +4,9 @@ Populate demo data for community tables.
 Removes any rows previously created by this command (title/name starting with "[Seed] ")
 and inserts fresh samples. Safe to re-run.
 
-The existing Django admin user (e.g. username "admin") is not modified; content models
-do not require a foreign key to User.
+Also ensures a local administrator for the panel and Django admin.
+Re-running resets that account's password to the documented test value.
+Other users are left unchanged. Content models do not require a foreign key to User.
 """
 
 from datetime import date, timedelta
@@ -25,6 +26,9 @@ from apps.news.models import CommunityNews
 from apps.suggestions.models import CommunitySuggestion
 
 SEED_PREFIX = "[Seed] "
+SEED_ADMIN_USERNAME = "admin.teste"
+SEED_ADMIN_EMAIL = "admin@sambaiba.local"
+SEED_ADMIN_PASSWORD = "sambaiba123"
 
 
 class Command(BaseCommand):
@@ -39,21 +43,7 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, **options):
-        User = get_user_model()
-        admins = User.objects.filter(is_superuser=True)
-        if admins.exists():
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"Found {admins.count()} superuser(s); first: {admins.first().username!r}"
-                )
-            )
-        else:
-            self.stdout.write(
-                self.style.WARNING(
-                    "No superuser found. Create one with: python manage.py createsuperuser"
-                )
-            )
-
+        self._seed_admin_user()
         self._clear_seed_rows()
         self._seed_events()
         self._seed_gallery()
@@ -64,6 +54,41 @@ class Command(BaseCommand):
             self._seed_suggestions()
 
         self.stdout.write(self.style.SUCCESS("Seed completed successfully."))
+
+    def _seed_admin_user(self):
+        User = get_user_model()
+        user = User.objects.filter(email__iexact=SEED_ADMIN_EMAIL).first()
+        if user is None:
+            user = User.objects.filter(username=SEED_ADMIN_USERNAME).first()
+
+        if user is None:
+            User.objects.create_superuser(
+                username=SEED_ADMIN_USERNAME,
+                email=SEED_ADMIN_EMAIL,
+                password=SEED_ADMIN_PASSWORD,
+            )
+            action = "Created"
+        else:
+            username_taken = (
+                user.username != SEED_ADMIN_USERNAME
+                and User.objects.filter(username=SEED_ADMIN_USERNAME).exclude(pk=user.pk).exists()
+            )
+            if not username_taken:
+                user.username = SEED_ADMIN_USERNAME
+            user.email = SEED_ADMIN_EMAIL
+            user.role = User.Role.ADMIN
+            user.is_superuser = True
+            user.is_staff = True
+            user.is_active = True
+            user.set_password(SEED_ADMIN_PASSWORD)
+            user.save()
+            action = "Updated"
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"{action} test admin: email={SEED_ADMIN_EMAIL} password={SEED_ADMIN_PASSWORD}"
+            )
+        )
 
     def _clear_seed_rows(self):
         n_e = CommunityEvent.objects.filter(title__startswith=SEED_PREFIX).delete()[0]
@@ -226,19 +251,39 @@ class Command(BaseCommand):
         rows = [
             CommunityNews(
                 title=f"{SEED_PREFIX}Horário especial no posto",
-                content="Na próxima semana o posto funcionará em horário estendido das 7h às 19h.",
+                summary="Na próxima semana o posto funcionará em horário estendido das 7h às 19h.",
+                content=(
+                    "Na próxima semana o Posto de Saúde Central funciona em horário estendido, "
+                    "das 7h às 19h, de segunda a sexta.\n\n"
+                    "O atendimento vale para consulta de enfermagem, vacinação e retirada de medicamentos. "
+                    "Leve um documento com foto e o cartão do SUS. Crianças devem estar acompanhadas "
+                    "de um responsável.\n\n"
+                    "Dúvidas pelo telefone (86) 3215-0000 ou na recepção, na Rua da Saúde, 123."
+                ),
                 category=CommunityNews.NewsCategory.AVISO,
                 is_pinned=True,
             ),
             CommunityNews(
                 title=f"{SEED_PREFIX}Mutirão de pintura",
-                content="Inscrições abertas para voluntários no CRAS até sexta-feira.",
+                summary="Inscrições abertas para voluntários no CRAS até sexta-feira.",
+                content=(
+                    "O mutirão de pintura da associação acontece no próximo sábado, a partir das 8h, "
+                    "na sede da Associação de Moradores.\n\n"
+                    "As inscrições de voluntários ficam abertas no CRAS até sexta-feira, às 16h. "
+                    "Não é preciso levar material: tintas e pincéis serão fornecidos no local."
+                ),
                 category=CommunityNews.NewsCategory.COMUNICADO,
                 is_pinned=False,
             ),
             CommunityNews(
                 title=f"{SEED_PREFIX}Atualização do calendário escolar",
-                content="Recesso antecipado conforme calendário municipal publicado no diário oficial.",
+                summary="Recesso antecipado conforme calendário municipal publicado no diário oficial.",
+                content=(
+                    "A Secretaria Municipal de Educação antecipou o recesso escolar. "
+                    "As aulas retornam na data publicada no diário oficial.\n\n"
+                    "A merenda e o transporte escolar seguem o novo calendário. "
+                    "Famílias com dúvida podem procurar a secretaria da escola municipal."
+                ),
                 category=CommunityNews.NewsCategory.ATUALIZACAO,
                 is_pinned=False,
             ),
