@@ -16,6 +16,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from core.runtime import resolve_database, resolve_storage
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'api',
+    'core.apps.CoreConfig',
     'apps.users',
     'apps.jwt_auth',
     'apps.event_categories',
@@ -98,15 +101,22 @@ AUTH_USER_MODEL = "users.User"
 # Local: crie um banco no Postgres e defina as variáveis (veja .env.example).
 # Produção: use as mesmas variáveis no ambiente (ou secrets) do provedor.
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "sambaiba"),
-        "USER": os.environ.get("POSTGRES_USER", "sambaiba"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "sambaiba"),
-        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
-    }
+# Banco: Postgres quando a conexão abre. Sem acesso, o SQLite local db.sqlite3.
+# Arquivos: S3 ou R2 quando o bucket responde. Sem acesso, a pasta media/.
+
+_database, SQLITE_FALLBACK = resolve_database(BASE_DIR)
+DATABASES = {"default": _database}
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
+
+_storage_backend, OBJECT_STORAGE = resolve_storage()
+STORAGES = {
+    "default": {"BACKEND": _storage_backend},
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
 }
 
 
@@ -145,9 +155,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
