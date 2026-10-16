@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class CommunityNews(models.Model):
@@ -19,7 +20,7 @@ class CommunityNews(models.Model):
     )
     is_pinned = models.BooleanField("pinned", default=False, db_index=True)
     image = models.ImageField("image", upload_to="news/", blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         db_table = "community_communitynews"
