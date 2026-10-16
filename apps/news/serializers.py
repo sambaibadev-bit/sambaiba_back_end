@@ -7,7 +7,7 @@ ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 
 
 class CommunityNewsSerializer(serializers.ModelSerializer):
-    created_date = serializers.DateTimeField(source="created_at", read_only=True)
+    created_date = serializers.DateTimeField(source="created_at", required=False)
     clear_image = serializers.BooleanField(write_only=True, required=False, default=False)
 
     class Meta:

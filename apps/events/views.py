@@ -46,7 +46,11 @@ class CommunityEventCollectionAPIView(APIView):
         if order:
             qs = qs.order_by(*order)
         limit = parse_limit(request, default=300, maximum=500)
-        data = CommunityEventSerializer(qs[:limit], many=True).data
+        data = CommunityEventSerializer(
+            qs[:limit],
+            many=True,
+            context={"request": request},
+        ).data
         return Response(data)
 
     @extend_schema(
@@ -58,7 +62,7 @@ class CommunityEventCollectionAPIView(APIView):
         auth=JWT_AUTH,
     )
     def post(self, request):
-        ser = CommunityEventSerializer(data=request.data)
+        ser = CommunityEventSerializer(data=request.data, context={"request": request})
         ser.is_valid(raise_exception=True)
         ser.save()
         return Response(ser.data, status=status.HTTP_201_CREATED)
@@ -82,7 +86,7 @@ class CommunityEventDetailAPIView(APIView):
     )
     def get(self, request, pk):
         obj = get_object_or_404(CommunityEvent.objects.select_related("category"), pk=pk)
-        return Response(CommunityEventSerializer(obj).data)
+        return Response(CommunityEventSerializer(obj, context={"request": request}).data)
 
     @extend_schema(
         operation_id="events_replace",
@@ -94,7 +98,7 @@ class CommunityEventDetailAPIView(APIView):
     )
     def put(self, request, pk):
         obj = get_object_or_404(CommunityEvent.objects.select_related("category"), pk=pk)
-        ser = CommunityEventSerializer(obj, data=request.data)
+        ser = CommunityEventSerializer(obj, data=request.data, context={"request": request})
         ser.is_valid(raise_exception=True)
         ser.save()
         return Response(ser.data)
@@ -109,7 +113,12 @@ class CommunityEventDetailAPIView(APIView):
     )
     def patch(self, request, pk):
         obj = get_object_or_404(CommunityEvent.objects.select_related("category"), pk=pk)
-        ser = CommunityEventSerializer(obj, data=request.data, partial=True)
+        ser = CommunityEventSerializer(
+            obj,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
         ser.is_valid(raise_exception=True)
         ser.save()
         return Response(ser.data)
@@ -123,5 +132,7 @@ class CommunityEventDetailAPIView(APIView):
     )
     def delete(self, request, pk):
         obj = get_object_or_404(CommunityEvent.objects.select_related("category"), pk=pk)
+        if obj.image:
+            obj.image.delete(save=False)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

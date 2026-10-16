@@ -9,6 +9,7 @@ class CommunityEvent(models.Model):
     date = models.DateField("date")
     time = models.CharField("time", max_length=64, blank=True)
     location = models.CharField("location", max_length=255, blank=True)
+    image = models.ImageField("image", upload_to="events/", blank=True, null=True)
     category = models.ForeignKey(
         "event_categories.EventCategory",
         on_delete=models.PROTECT,
