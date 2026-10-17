@@ -29,6 +29,29 @@ class UserRegisterView(generics.CreateAPIView):
 
 
 @extend_schema_view(
+    post=extend_schema(
+        tags=["Users"],
+        summary="Public community signup",
+        operation_id="users_signup",
+        description=(
+            "Public self-registration. Creates a **Community** account. "
+            "No authentication required. "
+            "Administrators are not created here — use the seed or Django admin."
+        ),
+        auth=[],
+    ),
+)
+class UserSignupView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserCreateSerializer
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    def perform_create(self, serializer):
+        serializer.save(role=User.Role.COMMUNITY)
+
+
+@extend_schema_view(
     get=extend_schema(
         tags=["Users"],
         summary="Authenticated user profile",

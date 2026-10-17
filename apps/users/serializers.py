@@ -22,6 +22,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return value.lower()
 
     def create(self, validated_data):
+        validated_data["role"] = User.Role.COMMUNITY
         return User.objects.create_user(**validated_data)
 
 

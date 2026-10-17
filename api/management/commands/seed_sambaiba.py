@@ -66,6 +66,8 @@ class Command(BaseCommand):
                 username=SEED_ADMIN_USERNAME,
                 email=SEED_ADMIN_EMAIL,
                 password=SEED_ADMIN_PASSWORD,
+                role=User.Role.ADMIN,
+                first_name="Administrador",
             )
             action = "Created"
         else:
